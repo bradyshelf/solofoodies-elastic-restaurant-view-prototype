@@ -316,7 +316,6 @@ const ChatConversation = () => {
               type="number"
               step="5"
               min="0"
-              max={maxOfferAmount || undefined}
               placeholder="Enter amount"
               value={offerAmount}
               onChange={(e) => setOfferAmount(e.target.value)}
