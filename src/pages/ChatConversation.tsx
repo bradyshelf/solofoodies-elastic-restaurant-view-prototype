@@ -6,6 +6,7 @@ import { ArrowLeft, Send, Plus, Euro, Check, X, Search, MapPin, Users, Calendar,
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ColabInvitationCard } from '@/components/ColabInvitationCard';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,10 +26,20 @@ interface Message {
   text: string;
   isUser: boolean;
   timestamp: Date;
-  type?: 'text' | 'offer';
+  type?: 'text' | 'offer' | 'colab-invitation';
   offerAmount?: number;
   showButtons?: boolean;
   offerStatus?: 'pending' | 'accepted' | 'rejected';
+  colabData?: {
+    id: number;
+    title: string;
+    description: string;
+    location: string;
+    maxParticipants: string;
+    dateRange: string;
+    discount: string;
+    schedule: string;
+  };
 }
 
 const ChatConversation = () => {
@@ -125,12 +136,14 @@ const ChatConversation = () => {
   const handleSelectColab = (colabId: number) => {
     const selectedColab = activeColabs.find(colab => colab.id === colabId);
     if (selectedColab) {
-      // Send colab invitation link as a message
+      // Send colab invitation card as a message
       const invitationMessage: Message = {
         id: Date.now(),
-        text: `Invited you to collaborate on: "${selectedColab.title}" - View details and accept/negotiate: https://solofoodies.com/colab/${colabId}`,
+        text: `Invited you to collaborate`,
         isUser: true,
-        timestamp: new Date()
+        timestamp: new Date(),
+        type: 'colab-invitation',
+        colabData: selectedColab
       };
       
       setMessages(prev => [...prev, invitationMessage]);
@@ -363,6 +376,11 @@ const ChatConversation = () => {
                         )}
                       </div>
                     )}
+                  </div>
+                ) : message.type === 'colab-invitation' ? (
+                  <div className="max-w-full">
+                    <div className="mb-2 text-sm text-gray-600">{message.text}</div>
+                    {message.colabData && <ColabInvitationCard colab={message.colabData} />}
                   </div>
                 ) : (
                   <div
