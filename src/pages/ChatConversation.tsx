@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Send, Plus, Euro } from 'lucide-react';
+import { ArrowLeft, Send, Plus, Euro, Check, X } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +28,7 @@ interface Message {
   type?: 'text' | 'offer';
   offerAmount?: number;
   showButtons?: boolean;
+  offerStatus?: 'pending' | 'accepted' | 'rejected';
 }
 
 const ChatConversation = () => {
@@ -153,6 +154,18 @@ const ChatConversation = () => {
     }
   };
 
+  const handleAcceptOffer = (messageId: number) => {
+    setMessages(prev => prev.map(msg => 
+      msg.id === messageId ? { ...msg, showButtons: false, offerStatus: 'accepted' } : msg
+    ));
+  };
+
+  const handleRejectOffer = (messageId: number) => {
+    setMessages(prev => prev.map(msg => 
+      msg.id === messageId ? { ...msg, showButtons: false, offerStatus: 'rejected' } : msg
+    ));
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSendMessage();
@@ -232,12 +245,18 @@ const ChatConversation = () => {
                       <div className="text-gray-600 text-sm mb-1">Offer for</div>
                       <div className="text-2xl font-bold text-gray-900">{message.offerAmount}€</div>
                     </div>
-                    {message.showButtons && (
+                    {message.showButtons ? (
                       <div className="flex flex-col space-y-2">
-                        <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg px-6 py-3">
+                        <Button 
+                          className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg px-6 py-3"
+                          onClick={() => handleAcceptOffer(message.id)}
+                        >
                           Accept
                         </Button>
-                        <Button className="w-full bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg px-6 py-3">
+                        <Button 
+                          className="w-full bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg px-6 py-3"
+                          onClick={() => handleRejectOffer(message.id)}
+                        >
                           Reject
                         </Button>
                         <Button 
@@ -246,6 +265,20 @@ const ChatConversation = () => {
                         >
                           Counter
                         </Button>
+                      </div>
+                    ) : message.offerStatus && (
+                      <div className="flex items-center justify-center space-x-2 text-sm font-medium">
+                        {message.offerStatus === 'accepted' ? (
+                          <>
+                            <Check className="w-4 h-4 text-green-600" />
+                            <span className="text-green-600">Offer accepted</span>
+                          </>
+                        ) : (
+                          <>
+                            <X className="w-4 h-4 text-red-600" />
+                            <span className="text-red-600">Offer rejected</span>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
