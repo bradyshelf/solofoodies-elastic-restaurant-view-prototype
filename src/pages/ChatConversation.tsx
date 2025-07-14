@@ -229,7 +229,7 @@ const ChatConversation = () => {
                           className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-6 py-3"
                           onClick={() => handleCounteroffer(message.offerAmount!)}
                         >
-                          Counteroffer
+                          Counter
                         </Button>
                       </div>
                     )}
