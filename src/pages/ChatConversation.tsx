@@ -273,6 +273,8 @@ const ChatConversation = () => {
           <div className="flex items-center space-x-2">
             <Input
               type="number"
+              step="5"
+              min="0"
               placeholder="Enter amount"
               value={offerAmount}
               onChange={(e) => setOfferAmount(e.target.value)}
