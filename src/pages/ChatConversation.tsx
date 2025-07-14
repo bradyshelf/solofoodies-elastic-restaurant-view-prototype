@@ -39,6 +39,7 @@ const ChatConversation = () => {
   const [offerAmount, setOfferAmount] = useState('');
   const [isCounteroffer, setIsCounteroffer] = useState(false);
   const [maxOfferAmount, setMaxOfferAmount] = useState<number | null>(null);
+  const [lastBotOffer, setLastBotOffer] = useState<number | null>(null);
 
   // Mock chat user data - in a real app this would come from an API
   const chatUser = {
@@ -123,7 +124,20 @@ const ChatConversation = () => {
 
       // Send automated counter offer after a delay
       setTimeout(() => {
-        const counterOfferAmount = Math.max(5, parseFloat(offerAmount) - 10); // Counter with 10€ less, minimum 5€
+        const userOfferAmount = parseFloat(offerAmount);
+        let counterOfferAmount;
+        
+        if (lastBotOffer !== null) {
+          // Calculate halfway point between last bot offer and current user offer
+          counterOfferAmount = (lastBotOffer + userOfferAmount) / 2;
+        } else {
+          // For first offer, start with 70% of user's offer
+          counterOfferAmount = userOfferAmount * 0.7;
+        }
+        
+        // Round to nearest euro
+        counterOfferAmount = Math.round(counterOfferAmount);
+        
         const counterOffer: Message = {
           id: Date.now() + 1,
           text: `Counter offer for ${counterOfferAmount}€`,
@@ -134,6 +148,7 @@ const ChatConversation = () => {
           showButtons: true // Received offers show buttons
         };
         setMessages(prev => [...prev, counterOffer]);
+        setLastBotOffer(counterOfferAmount);
       }, 2000);
     }
   };
