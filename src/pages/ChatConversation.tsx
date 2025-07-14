@@ -41,6 +41,8 @@ const ChatConversation = () => {
   const [isCounteroffer, setIsCounteroffer] = useState(false);
   const [maxOfferAmount, setMaxOfferAmount] = useState<number | null>(null);
   const [lastBotOffer, setLastBotOffer] = useState<number | null>(null);
+  const [showRejectWarning, setShowRejectWarning] = useState(false);
+  const [pendingRejectMessageId, setPendingRejectMessageId] = useState<number | null>(null);
 
   // Mock chat user data - in a real app this would come from an API
   const chatUser = {
@@ -166,6 +168,30 @@ const ChatConversation = () => {
     ));
   };
 
+  const handleShowRejectWarning = (messageId: number) => {
+    setPendingRejectMessageId(messageId);
+    setShowRejectWarning(true);
+  };
+
+  const handleConfirmReject = () => {
+    if (pendingRejectMessageId) {
+      handleRejectOffer(pendingRejectMessageId);
+    }
+    setShowRejectWarning(false);
+    setPendingRejectMessageId(null);
+  };
+
+  const handleRejectWarningCounteroffer = () => {
+    setShowRejectWarning(false);
+    if (pendingRejectMessageId) {
+      const message = messages.find(msg => msg.id === pendingRejectMessageId);
+      if (message?.offerAmount) {
+        handleCounteroffer(message.offerAmount);
+      }
+    }
+    setPendingRejectMessageId(null);
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSendMessage();
@@ -255,7 +281,7 @@ const ChatConversation = () => {
                         </Button>
                         <Button 
                           className="w-full bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg px-6 py-3"
-                          onClick={() => handleRejectOffer(message.id)}
+                          onClick={() => handleShowRejectWarning(message.id)}
                         >
                           Reject
                         </Button>
@@ -369,6 +395,44 @@ const ChatConversation = () => {
             </Button>
             <Button onClick={handleSendOffer} disabled={!offerAmount.trim()}>
               Send Offer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reject Warning Dialog */}
+      <Dialog open={showRejectWarning} onOpenChange={setShowRejectWarning}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reject Offer</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              This action cannot be undone. Rejecting this offer will end the collaboration opportunity.
+            </p>
+            <p className="text-gray-600">
+              Are you sure you don't want to make a counter offer instead?
+            </p>
+          </div>
+          <DialogFooter className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowRejectWarning(false)}
+              className="w-full sm:w-auto"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleRejectWarningCounteroffer}
+              className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white"
+            >
+              Counter Offer
+            </Button>
+            <Button 
+              onClick={handleConfirmReject}
+              className="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white"
+            >
+              Reject & End Colab
             </Button>
           </DialogFooter>
         </DialogContent>
