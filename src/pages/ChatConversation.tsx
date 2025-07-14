@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Send, Plus, Camera, MapPin, DollarSign } from 'lucide-react';
+import { ArrowLeft, Send, Plus, Euro } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -270,19 +270,11 @@ const ChatConversation = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" side="top" className="w-48">
-              <DropdownMenuItem className="flex items-center space-x-2 cursor-pointer">
-                <Camera className="w-4 h-4" />
-                <span>Photos & Videos</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="flex items-center space-x-2 cursor-pointer">
-                <MapPin className="w-4 h-4" />
-                <span>Location</span>
-              </DropdownMenuItem>
               <DropdownMenuItem 
                 className="flex items-center space-x-2 cursor-pointer"
                 onClick={handleMakeOffer}
               >
-                <DollarSign className="w-4 h-4" />
+                <Euro className="w-4 h-4" />
                 <span>Make an Offer</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
