@@ -185,13 +185,13 @@ const ChatConversation = () => {
                       <div className="text-2xl font-bold text-gray-900">{message.offerAmount}€</div>
                     </div>
                     <div className="flex flex-col space-y-2">
-                      <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg">
+                      <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg px-6 py-3">
                         Accept
                       </Button>
-                      <Button className="w-full bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg">
+                      <Button className="w-full bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg px-6 py-3">
                         Reject
                       </Button>
-                      <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg">
+                      <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-6 py-3">
                         Counteroffer
                       </Button>
                     </div>
