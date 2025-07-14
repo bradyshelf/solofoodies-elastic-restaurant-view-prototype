@@ -12,12 +12,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 interface Message {
   id: number;
   text: string;
   isUser: boolean;
   timestamp: Date;
+  type?: 'text' | 'offer';
+  offerAmount?: number;
 }
 
 const ChatConversation = () => {
@@ -25,6 +34,8 @@ const ChatConversation = () => {
   const { chatId } = useParams();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
+  const [showOfferDialog, setShowOfferDialog] = useState(false);
+  const [offerAmount, setOfferAmount] = useState('');
 
   // Mock chat user data - in a real app this would come from an API
   const chatUser = {
@@ -70,6 +81,27 @@ const ChatConversation = () => {
           setMessages(prev => [...prev, secondAutoReply]);
         }, 1500);
       }, 1000);
+    }
+  };
+
+  const handleMakeOffer = () => {
+    setShowOfferDialog(true);
+  };
+
+  const handleSendOffer = () => {
+    if (offerAmount.trim()) {
+      const offerMessage: Message = {
+        id: Date.now(),
+        text: `Offer for ${offerAmount}€`,
+        isUser: true,
+        timestamp: new Date(),
+        type: 'offer',
+        offerAmount: parseFloat(offerAmount)
+      };
+      
+      setMessages(prev => [...prev, offerMessage]);
+      setOfferAmount('');
+      setShowOfferDialog(false);
     }
   };
 
@@ -146,15 +178,32 @@ const ChatConversation = () => {
               <div
                 className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
               >
-                <div
-                  className={`max-w-[80%] px-4 py-2 rounded-lg ${
-                    message.isUser
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 text-gray-900'
-                  }`}
-                >
-                  <p className="text-sm">{message.text}</p>
-                </div>
+                {message.type === 'offer' ? (
+                  <div className="max-w-[80%] bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                    <div className="text-center mb-3">
+                      <div className="text-gray-600 text-sm mb-1">Offer for</div>
+                      <div className="text-2xl font-bold text-gray-900">{message.offerAmount}€</div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg">
+                        Accept
+                      </Button>
+                      <Button className="flex-1 bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg">
+                        Reject
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    className={`max-w-[80%] px-4 py-2 rounded-lg ${
+                      message.isUser
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-200 text-gray-900'
+                    }`}
+                  >
+                    <p className="text-sm">{message.text}</p>
+                  </div>
+                )}
               </div>
               {shouldShowTimestamp(index) && (
                 <div className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
@@ -188,7 +237,10 @@ const ChatConversation = () => {
                 <MapPin className="w-4 h-4" />
                 <span>Location</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex items-center space-x-2 cursor-pointer">
+              <DropdownMenuItem 
+                className="flex items-center space-x-2 cursor-pointer"
+                onClick={handleMakeOffer}
+              >
                 <DollarSign className="w-4 h-4" />
                 <span>Make an Offer</span>
               </DropdownMenuItem>
@@ -211,6 +263,33 @@ const ChatConversation = () => {
           </Button>
         </div>
       </div>
+
+      {/* Offer Dialog */}
+      <Dialog open={showOfferDialog} onOpenChange={setShowOfferDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Make an Offer</DialogTitle>
+          </DialogHeader>
+          <div className="flex items-center space-x-2">
+            <Input
+              type="number"
+              placeholder="Enter amount"
+              value={offerAmount}
+              onChange={(e) => setOfferAmount(e.target.value)}
+              className="flex-1"
+            />
+            <span className="text-gray-500">€</span>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowOfferDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSendOffer} disabled={!offerAmount.trim()}>
+              Send Offer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
