@@ -27,6 +27,7 @@ interface Message {
   timestamp: Date;
   type?: 'text' | 'offer';
   offerAmount?: number;
+  showButtons?: boolean;
 }
 
 const ChatConversation = () => {
@@ -90,18 +91,39 @@ const ChatConversation = () => {
 
   const handleSendOffer = () => {
     if (offerAmount.trim()) {
+      // Disable buttons on previous offers
+      setMessages(prev => prev.map(msg => 
+        msg.type === 'offer' ? { ...msg, showButtons: false } : msg
+      ));
+
       const offerMessage: Message = {
         id: Date.now(),
         text: `Offer for ${offerAmount}€`,
         isUser: true,
         timestamp: new Date(),
         type: 'offer',
-        offerAmount: parseFloat(offerAmount)
+        offerAmount: parseFloat(offerAmount),
+        showButtons: false // User offers don't show buttons
       };
       
       setMessages(prev => [...prev, offerMessage]);
       setOfferAmount('');
       setShowOfferDialog(false);
+
+      // Send automated counter offer after a delay
+      setTimeout(() => {
+        const counterOfferAmount = Math.max(5, parseFloat(offerAmount) - 10); // Counter with 10€ less, minimum 5€
+        const counterOffer: Message = {
+          id: Date.now() + 1,
+          text: `Counter offer for ${counterOfferAmount}€`,
+          isUser: false,
+          timestamp: new Date(),
+          type: 'offer',
+          offerAmount: counterOfferAmount,
+          showButtons: true // Received offers show buttons
+        };
+        setMessages(prev => [...prev, counterOffer]);
+      }, 2000);
     }
   };
 
@@ -184,17 +206,19 @@ const ChatConversation = () => {
                       <div className="text-gray-600 text-sm mb-1">Offer for</div>
                       <div className="text-2xl font-bold text-gray-900">{message.offerAmount}€</div>
                     </div>
-                    <div className="flex flex-col space-y-2">
-                      <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg px-6 py-3">
-                        Accept
-                      </Button>
-                      <Button className="w-full bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg px-6 py-3">
-                        Reject
-                      </Button>
-                      <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-6 py-3">
-                        Counteroffer
-                      </Button>
-                    </div>
+                    {message.showButtons && (
+                      <div className="flex flex-col space-y-2">
+                        <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg px-6 py-3">
+                          Accept
+                        </Button>
+                        <Button className="w-full bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg px-6 py-3">
+                          Reject
+                        </Button>
+                        <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-6 py-3">
+                          Counteroffer
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div
