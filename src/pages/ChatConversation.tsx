@@ -96,6 +96,7 @@ const ChatConversation = () => {
   const handleCounteroffer = (originalAmount: number) => {
     setIsCounteroffer(true);
     setMaxOfferAmount(originalAmount);
+    setOfferAmount(originalAmount.toString());
     setShowOfferDialog(true);
   };
 
