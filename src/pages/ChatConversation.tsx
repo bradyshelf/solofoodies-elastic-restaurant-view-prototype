@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Send, Plus, Euro, Check, X } from 'lucide-react';
+import { ArrowLeft, Send, Plus, Euro, Check, X, Search, MapPin, Users, Calendar, Percent, Clock } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,9 +47,28 @@ const ChatConversation = () => {
 
   // Mock active collaborations - in real app this would come from API
   const activeColabs = [
-    { id: 1, title: "Weekend Brunch Special", description: "2-day food photography collaboration", budget: "€150-200" },
-    { id: 2, title: "New Menu Launch", description: "Content creation for new Italian menu", budget: "€100-150" },
-    { id: 3, title: "Social Media Content", description: "Weekly food styling and photos", budget: "€200-300" },
+    { 
+      id: 1, 
+      title: "Colaboración", 
+      description: "Colaboración para promocionar nuestro nuevo menú mediterráneo",
+      location: "Valencia, Madrid",
+      maxParticipants: "3 acompañantes máx.",
+      dateRange: "14/01/24 - 14/02/24",
+      discount: "20% Descuento",
+      schedule: "lunes, martes, miércoles",
+      date: "31/12/23"
+    },
+    { 
+      id: 2, 
+      title: "Colaboración", 
+      description: "Colaboración exclusiva para influencers de cocina catalana",
+      location: "Barcelona",
+      maxParticipants: "2 acompañantes máx.",
+      dateRange: "15/02/24 - 15/03/24",
+      discount: "50€ Descuento",
+      schedule: "viernes, sábado, domingo",
+      date: "09/01/24"
+    },
   ];
 
   // Mock chat user data - in a real app this would come from an API
@@ -477,25 +496,76 @@ const ChatConversation = () => {
 
       {/* Colab Selector Dialog */}
       <Dialog open={showColabSelector} onOpenChange={setShowColabSelector}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Select Collaboration to Invite</DialogTitle>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-hidden">
+          <DialogHeader className="border-b border-gray-200 pb-4">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-xl font-bold">COLABORACIONES</DialogTitle>
+              <Search className="w-5 h-5 text-gray-400" />
+            </div>
           </DialogHeader>
-          <div className="space-y-3 max-h-96 overflow-y-auto">
-            {activeColabs.map((colab) => (
-              <div 
-                key={colab.id}
-                onClick={() => handleSelectColab(colab.id)}
-                className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
-              >
-                <h3 className="font-semibold text-gray-900 mb-1">{colab.title}</h3>
-                <p className="text-gray-600 text-sm mb-2">{colab.description}</p>
-                <div className="text-green-600 font-medium text-sm">{colab.budget}</div>
-              </div>
-            ))}
+          
+          <div className="py-4">
+            <h3 className="text-lg font-semibold mb-4">Colaboraciones Activas ({activeColabs.length})</h3>
+            
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {activeColabs.map((colab) => (
+                <div 
+                  key={colab.id}
+                  onClick={() => handleSelectColab(colab.id)}
+                  className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors relative"
+                >
+                  <div className="absolute top-4 right-4 text-xs text-gray-400">
+                    {colab.date}
+                  </div>
+                  
+                  <div className="pr-16">
+                    <h4 className="font-semibold text-gray-900 mb-2">{colab.title}</h4>
+                    <p className="text-gray-600 text-sm mb-3">{colab.description}</p>
+                    
+                    <div className="space-y-2">
+                      <div className="flex items-center text-sm text-gray-600">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        <span>{colab.location}</span>
+                      </div>
+                      
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Users className="w-4 h-4 mr-2" />
+                        <span>{colab.maxParticipants}</span>
+                      </div>
+                      
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Calendar className="w-4 h-4 mr-2" />
+                        <span>{colab.dateRange}</span>
+                      </div>
+                      
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Percent className="w-4 h-4 mr-2" />
+                        <span>{colab.discount}</span>
+                      </div>
+                      
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Clock className="w-4 h-4 mr-2" />
+                        <span>{colab.schedule}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowColabSelector(false)}>
+          
+          <DialogFooter className="border-t border-gray-200 pt-4 flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+            <Button 
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-3"
+              disabled
+            >
+              + Crear colaboración
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowColabSelector(false)}
+              className="w-full sm:w-auto"
+            >
               Cancel
             </Button>
           </DialogFooter>
