@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, Send, Plus } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -165,6 +165,11 @@ const ChatConversation = () => {
       {/* Input Area */}
       <div className="p-4 border-t border-gray-200 bg-white">
         <div className="flex items-center space-x-2">
+          <Button
+            className="bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-full p-2 w-10 h-10"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
           <Input
             type="text"
             placeholder="Type a message..."
