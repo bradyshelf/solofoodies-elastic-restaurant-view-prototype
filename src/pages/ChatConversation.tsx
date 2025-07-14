@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Send, Plus, Euro, Check, X, Search, MapPin, Users, Calendar, Percent, Clock } from 'lucide-react';
+import { ArrowLeft, Send, Plus, Euro, Check, X, Search, MapPin, Users, Calendar, Percent, Clock, UserPlus } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -422,7 +422,7 @@ const ChatConversation = () => {
                 className="flex items-center space-x-2 cursor-pointer"
                 onClick={handleInviteToColab}
               >
-                <Euro className="w-4 h-4" />
+                <UserPlus className="w-4 h-4" />
                 <span>Invite to Colab</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
