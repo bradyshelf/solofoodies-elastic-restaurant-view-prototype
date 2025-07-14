@@ -65,7 +65,7 @@ const ChatConversation = () => {
       location: "Valencia, Madrid",
       maxParticipants: "3 acompañantes máx.",
       dateRange: "14/01/24 - 14/02/24",
-      discount: "20% Descuento",
+      discount: "20%",
       schedule: "lunes, martes, miércoles",
       date: "31/12/23"
     },
@@ -76,7 +76,7 @@ const ChatConversation = () => {
       location: "Barcelona",
       maxParticipants: "2 acompañantes máx.",
       dateRange: "15/02/24 - 15/03/24",
-      discount: "50€ Descuento",
+      discount: "50€",
       schedule: "viernes, sábado, domingo",
       date: "09/01/24"
     },
