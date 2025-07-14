@@ -28,7 +28,7 @@ export const ColabInvitationCard = ({ colab }: ColabInvitationCardProps) => {
       <img 
         src="/lovable-uploads/d6aebf6a-5061-45f9-bff1-672043d5a31e.png" 
         alt="Collaboration invitation card"
-        className="rounded-lg w-72 h-auto"
+        className="rounded-lg w-48 h-auto"
       />
     </div>
   );
