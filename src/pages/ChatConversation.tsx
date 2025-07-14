@@ -179,7 +179,7 @@ const ChatConversation = () => {
                 className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
               >
                 {message.type === 'offer' ? (
-                  <div className="max-w-[80%] bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                  <div className="max-w-[90%] bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                     <div className="text-center mb-3">
                       <div className="text-gray-600 text-sm mb-1">Offer for</div>
                       <div className="text-2xl font-bold text-gray-900">{message.offerAmount}€</div>
