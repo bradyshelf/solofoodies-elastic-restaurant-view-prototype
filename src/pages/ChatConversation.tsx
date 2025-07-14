@@ -37,6 +37,8 @@ const ChatConversation = () => {
   const [inputValue, setInputValue] = useState('');
   const [showOfferDialog, setShowOfferDialog] = useState(false);
   const [offerAmount, setOfferAmount] = useState('');
+  const [isCounteroffer, setIsCounteroffer] = useState(false);
+  const [maxOfferAmount, setMaxOfferAmount] = useState<number | null>(null);
 
   // Mock chat user data - in a real app this would come from an API
   const chatUser = {
@@ -86,6 +88,14 @@ const ChatConversation = () => {
   };
 
   const handleMakeOffer = () => {
+    setIsCounteroffer(false);
+    setMaxOfferAmount(null);
+    setShowOfferDialog(true);
+  };
+
+  const handleCounteroffer = (originalAmount: number) => {
+    setIsCounteroffer(true);
+    setMaxOfferAmount(originalAmount);
     setShowOfferDialog(true);
   };
 
@@ -214,7 +224,10 @@ const ChatConversation = () => {
                         <Button className="w-full bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg px-6 py-3">
                           Reject
                         </Button>
-                        <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-6 py-3">
+                        <Button 
+                          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-6 py-3"
+                          onClick={() => handleCounteroffer(message.offerAmount!)}
+                        >
                           Counteroffer
                         </Button>
                       </div>
@@ -295,13 +308,14 @@ const ChatConversation = () => {
       <Dialog open={showOfferDialog} onOpenChange={setShowOfferDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Make an Offer</DialogTitle>
+            <DialogTitle>{isCounteroffer ? 'Make a Counteroffer' : 'Make an Offer'}</DialogTitle>
           </DialogHeader>
           <div className="flex items-center space-x-2">
             <Input
               type="number"
               step="5"
               min="0"
+              max={maxOfferAmount || undefined}
               placeholder="Enter amount"
               value={offerAmount}
               onChange={(e) => setOfferAmount(e.target.value)}
