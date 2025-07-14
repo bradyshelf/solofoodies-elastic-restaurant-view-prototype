@@ -188,14 +188,12 @@ const ChatConversation = () => {
                       <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg">
                         Accept
                       </Button>
-                      <div className="flex space-x-2">
-                        <Button className="flex-1 bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg">
-                          Reject
-                        </Button>
-                        <Button className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg">
-                          Counteroffer
-                        </Button>
-                      </div>
+                      <Button className="w-full bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg">
+                        Reject
+                      </Button>
+                      <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg">
+                        Counteroffer
+                      </Button>
                     </div>
                   </div>
                 ) : (
