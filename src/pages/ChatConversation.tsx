@@ -43,6 +43,14 @@ const ChatConversation = () => {
   const [lastBotOffer, setLastBotOffer] = useState<number | null>(null);
   const [showRejectWarning, setShowRejectWarning] = useState(false);
   const [pendingRejectMessageId, setPendingRejectMessageId] = useState<number | null>(null);
+  const [showColabSelector, setShowColabSelector] = useState(false);
+
+  // Mock active collaborations - in real app this would come from API
+  const activeColabs = [
+    { id: 1, title: "Weekend Brunch Special", description: "2-day food photography collaboration", budget: "€150-200" },
+    { id: 2, title: "New Menu Launch", description: "Content creation for new Italian menu", budget: "€100-150" },
+    { id: 3, title: "Social Media Content", description: "Weekly food styling and photos", budget: "€200-300" },
+  ];
 
   // Mock chat user data - in a real app this would come from an API
   const chatUser = {
@@ -91,10 +99,39 @@ const ChatConversation = () => {
     }
   };
 
-  const handleMakeOffer = () => {
-    setIsCounteroffer(false);
-    setMaxOfferAmount(null);
-    setShowOfferDialog(true);
+  const handleInviteToColab = () => {
+    setShowColabSelector(true);
+  };
+
+  const handleSelectColab = (colabId: number) => {
+    const selectedColab = activeColabs.find(colab => colab.id === colabId);
+    if (selectedColab) {
+      // Send colab invitation link as a message
+      const invitationMessage: Message = {
+        id: Date.now(),
+        text: `Invited you to collaborate on: "${selectedColab.title}" - View details and accept/negotiate: https://solofoodies.com/colab/${colabId}`,
+        isUser: true,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, invitationMessage]);
+      setShowColabSelector(false);
+
+      // Send automated 100 euro offer response after delay
+      setTimeout(() => {
+        const autoOffer: Message = {
+          id: Date.now() + 1,
+          text: `Counter offer for 100€`,
+          isUser: false,
+          timestamp: new Date(),
+          type: 'offer',
+          offerAmount: 100,
+          showButtons: true
+        };
+        setMessages(prev => [...prev, autoOffer]);
+        setLastBotOffer(100);
+      }, 2000);
+    }
   };
 
   const handleCounteroffer = (originalAmount: number) => {
@@ -346,10 +383,10 @@ const ChatConversation = () => {
             <DropdownMenuContent align="start" side="top" className="w-48">
               <DropdownMenuItem 
                 className="flex items-center space-x-2 cursor-pointer"
-                onClick={handleMakeOffer}
+                onClick={handleInviteToColab}
               >
                 <Euro className="w-4 h-4" />
-                <span>Make an Offer</span>
+                <span>Invite to Colab</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -433,6 +470,33 @@ const ChatConversation = () => {
               className="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white"
             >
               Reject & End Colab
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Colab Selector Dialog */}
+      <Dialog open={showColabSelector} onOpenChange={setShowColabSelector}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Select Collaboration to Invite</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {activeColabs.map((colab) => (
+              <div 
+                key={colab.id}
+                onClick={() => handleSelectColab(colab.id)}
+                className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+              >
+                <h3 className="font-semibold text-gray-900 mb-1">{colab.title}</h3>
+                <p className="text-gray-600 text-sm mb-2">{colab.description}</p>
+                <div className="text-green-600 font-medium text-sm">{colab.budget}</div>
+              </div>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowColabSelector(false)}>
+              Cancel
             </Button>
           </DialogFooter>
         </DialogContent>
