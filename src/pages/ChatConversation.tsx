@@ -2,10 +2,16 @@
 
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Send, Plus } from 'lucide-react';
+import { ArrowLeft, Send, Plus, Camera, MapPin, DollarSign } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface Message {
   id: number;
@@ -165,11 +171,29 @@ const ChatConversation = () => {
       {/* Input Area */}
       <div className="p-4 border-t border-gray-200 bg-white">
         <div className="flex items-center space-x-2">
-          <Button
-            className="bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-full p-2 w-10 h-10"
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                className="bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-full p-2 w-10 h-10"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" side="top" className="w-48">
+              <DropdownMenuItem className="flex items-center space-x-2 cursor-pointer">
+                <Camera className="w-4 h-4" />
+                <span>Photos & Videos</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex items-center space-x-2 cursor-pointer">
+                <MapPin className="w-4 h-4" />
+                <span>Location</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex items-center space-x-2 cursor-pointer">
+                <DollarSign className="w-4 h-4" />
+                <span>Make an Offer</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Input
             type="text"
             placeholder="Type a message..."
