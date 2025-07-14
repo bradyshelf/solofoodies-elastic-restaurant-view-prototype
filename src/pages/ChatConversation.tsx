@@ -184,13 +184,18 @@ const ChatConversation = () => {
                       <div className="text-gray-600 text-sm mb-1">Offer for</div>
                       <div className="text-2xl font-bold text-gray-900">{message.offerAmount}€</div>
                     </div>
-                    <div className="flex space-x-2">
-                      <Button className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg">
+                    <div className="flex flex-col space-y-2">
+                      <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg">
                         Accept
                       </Button>
-                      <Button className="flex-1 bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg">
-                        Reject
-                      </Button>
+                      <div className="flex space-x-2">
+                        <Button className="flex-1 bg-gray-400 hover:bg-gray-500 text-white font-medium rounded-lg">
+                          Reject
+                        </Button>
+                        <Button className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg">
+                          Counteroffer
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ) : (
