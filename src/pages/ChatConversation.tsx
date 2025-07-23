@@ -139,7 +139,7 @@ const ChatConversation = () => {
       // Send colab invitation card as a message
       const invitationMessage: Message = {
         id: Date.now(),
-        text: `Invited you to collaborate`,
+        text: `You invited to collaborate`,
         isUser: true,
         timestamp: new Date(),
         type: 'colab-invitation',
