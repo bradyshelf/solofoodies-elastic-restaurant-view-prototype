@@ -39,6 +39,8 @@ interface Message {
     dateRange: string;
     discount: string;
     schedule: string;
+    isPaid?: boolean;
+    price?: number;
   };
 }
 
@@ -55,6 +57,10 @@ const ChatConversation = () => {
   const [showRejectWarning, setShowRejectWarning] = useState(false);
   const [pendingRejectMessageId, setPendingRejectMessageId] = useState<number | null>(null);
   const [showColabSelector, setShowColabSelector] = useState(false);
+  const [showPaidColabDialog, setShowPaidColabDialog] = useState(false);
+  const [showPriceDialog, setShowPriceDialog] = useState(false);
+  const [selectedColabForInvite, setSelectedColabForInvite] = useState<number | null>(null);
+  const [colabPrice, setColabPrice] = useState('50');
 
   // Mock active collaborations - in real app this would come from API
   const activeColabs = [
@@ -134,36 +140,64 @@ const ChatConversation = () => {
   };
 
   const handleSelectColab = (colabId: number) => {
-    const selectedColab = activeColabs.find(colab => colab.id === colabId);
-    if (selectedColab) {
-      // Send colab invitation card as a message
-      const invitationMessage: Message = {
-        id: Date.now(),
-        text: `You invited to collaborate`,
-        isUser: true,
-        timestamp: new Date(),
-        type: 'colab-invitation',
-        colabData: selectedColab
-      };
-      
-      setMessages(prev => [...prev, invitationMessage]);
-      setShowColabSelector(false);
+    setSelectedColabForInvite(colabId);
+    setShowColabSelector(false);
+    setShowPaidColabDialog(true);
+  };
 
-      // Send automated 100 euro offer response after delay
-      setTimeout(() => {
-        const autoOffer: Message = {
-          id: Date.now() + 1,
-          text: `Counter offer for 100€`,
-          isUser: false,
-          timestamp: new Date(),
-          type: 'offer',
-          offerAmount: 100,
-          showButtons: true
-        };
-        setMessages(prev => [...prev, autoOffer]);
-        setLastBotOffer(100);
-      }, 2000);
+  const handleCreateFreeColab = () => {
+    if (selectedColabForInvite) {
+      const selectedColab = activeColabs.find(colab => colab.id === selectedColabForInvite);
+      if (selectedColab) {
+        createColabInvitation(selectedColab, false);
+      }
     }
+    setShowPaidColabDialog(false);
+    setSelectedColabForInvite(null);
+  };
+
+  const handleCreatePaidColab = () => {
+    if (selectedColabForInvite) {
+      const selectedColab = activeColabs.find(colab => colab.id === selectedColabForInvite);
+      if (selectedColab) {
+        createColabInvitation(selectedColab, true, parseFloat(colabPrice));
+      }
+    }
+    setShowPriceDialog(false);
+    setSelectedColabForInvite(null);
+  };
+
+  const createColabInvitation = (selectedColab: any, isPaid: boolean, price?: number) => {
+    // Send colab invitation card as a message
+    const invitationMessage: Message = {
+      id: Date.now(),
+      text: `You invited to collaborate`,
+      isUser: true,
+      timestamp: new Date(),
+      type: 'colab-invitation',
+      colabData: {
+        ...selectedColab,
+        isPaid,
+        price
+      }
+    };
+    
+    setMessages(prev => [...prev, invitationMessage]);
+
+    // Send automated 100 euro offer response after delay
+    setTimeout(() => {
+      const autoOffer: Message = {
+        id: Date.now() + 1,
+        text: `Counter offer for 100€`,
+        isUser: false,
+        timestamp: new Date(),
+        type: 'offer',
+        offerAmount: 100,
+        showButtons: true
+      };
+      setMessages(prev => [...prev, autoOffer]);
+      setLastBotOffer(100);
+    }, 2000);
   };
 
   const handleCounteroffer = (originalAmount: number) => {
@@ -585,6 +619,83 @@ const ChatConversation = () => {
               className="w-full sm:w-auto"
             >
               Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Paid Collaboration Dialog */}
+      <Dialog open={showPaidColabDialog} onOpenChange={setShowPaidColabDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Collaboration Type</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              Do you want this to be a paid collaboration?
+            </p>
+          </div>
+          <DialogFooter className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+            <Button 
+              variant="outline" 
+              onClick={handleCreateFreeColab}
+              className="w-full sm:w-auto"
+            >
+              No, Free Collaboration
+            </Button>
+            <Button 
+              onClick={() => {
+                setShowPaidColabDialog(false);
+                setShowPriceDialog(true);
+              }}
+              className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white"
+            >
+              Yes, Set Price
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Price Setting Dialog */}
+      <Dialog open={showPriceDialog} onOpenChange={setShowPriceDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Set Collaboration Price</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              What price do you want to set for this collaboration?
+            </p>
+            <div className="flex items-center space-x-2">
+              <Input
+                type="number"
+                step="5"
+                min="0"
+                placeholder="Enter price"
+                value={colabPrice}
+                onChange={(e) => setColabPrice(e.target.value)}
+                className="flex-1"
+              />
+              <span className="text-gray-500">€</span>
+            </div>
+          </div>
+          <DialogFooter className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setShowPriceDialog(false);
+                setSelectedColabForInvite(null);
+              }}
+              className="w-full sm:w-auto"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleCreatePaidColab}
+              disabled={!colabPrice.trim()}
+              className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white"
+            >
+              Create Paid Collaboration
             </Button>
           </DialogFooter>
         </DialogContent>
